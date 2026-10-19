@@ -8,12 +8,12 @@ Observação: O Código foi escrito 100% por mim, ele está comentado pois eu es
 
 O script `crudpython.py` realiza, em sequência, as quatro operações do CRUD na tabela `vendas`:
 
-| Operação | Comando SQL | O que o script faz |
-|---|---|---|
-| **C**reate | `INSERT` | Cadastra uma venda (nome do produto e valor) |
-| **R**ead | `SELECT` | Lista todas as vendas e imprime o resultado |
-| **U**pdate | `UPDATE` | Altera o valor de uma venda pelo `idVendas` |
-| **D**elete | `DELETE` | Remove uma venda pelo `idVendas` |
+| Operação   | Comando SQL | O que o script faz                           |
+| ---------- | ----------- | -------------------------------------------- |
+| **C**reate | `INSERT`    | Cadastra uma venda (nome do produto e valor) |
+| **R**ead   | `SELECT`    | Lista todas as vendas e imprime o resultado  |
+| **U**pdate | `UPDATE`    | Altera o valor de uma venda pelo `idVendas`  |
+| **D**elete | `DELETE`    | Remove uma venda pelo `idVendas`             |
 
 Os valores usados (produto, valor e ids) estão como variáveis no próprio código. Edite-os para testar com os seus dados.
 
@@ -123,4 +123,4 @@ python crudpython.py
 - [ ] Separar cada operação em uma função
 - [ ] Criar um menu interativo no terminal
 - [ ] Tratar erros com `try/except` e validar os dados de entrada
-- [ ] Evoluir para uma API com FastAPI ou Flask
+- [ ] Evoluir para um framework como django
