@@ -1,5 +1,7 @@
 # Instalar o mysql-connector-python "pip install mysql-connector-python"
 # Esconder Senhas: pip install python-dotenv
+# É um módulo que já vem com o Python e serve para conversar com o sistema operacional. Aqui você só usa uma coisa dele: os.getenv("NOME"), que lê uma variável de ambiente, 
+# um valor guardado na memória do processo, fora do seu código. Se a variável não existir, devolve None.
 import os
 import mysql.connector
 from dotenv import load_dotenv
@@ -9,50 +11,92 @@ from dotenv import load_dotenv
 
 load_dotenv()
 # load_dotenv(): é a função dessa biblioteca que faz a leitura.
-
+    
 # Configurando para conectar ao banco de dados MySQL
-conexao = mysql.connector.connect(
-    host=os.getenv("DB_HOST"),
-    user=os.getenv("DB_USER"),
-    password=os.getenv("DB_PASSWORD"),
-    database=os.getenv("DB_NAME")
-)
-# Verificar se Conectou 
-
-# print("Conectado!" if conexao.is_connected() else "Falhou")
-# conexao.close()
-
-# Iniciando o cursor para executar comandos SQL
-cursor = conexao.cursor() 
+def conectar():
+    return mysql.connector.connect(
+        host=os.getenv("DB_HOST"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        database=os.getenv("DB_NAME")
+    )
+ 
 
 # CREATE 
-nome_Produto = "toddynho"
-valor = 3
+def criar_vendas(nome_Produto,valor):    
+# Criar uma conexão com banco de dados
+    conexao = conectar()
+# Criar um cursor para executar os comandos 
+    cursor = conexao.cursor()
 
-comando = 'INSERT INTO vendas (nome_Produto, valor) VALUES (%s, %s)' # Fazer um comando SQL
-cursor.execute(comando, (nome_Produto, valor)) # Executar o comando SQL
-conexao.commit() # edita o banco de dados
+    comando = 'INSERT INTO vendas (nome_Produto, valor) VALUES (%s, %s)' # Fazer um comando SQL
+    cursor.execute(comando, (nome_Produto, valor)) # Executar o comando SQL
+    conexao.commit() # edita o banco de dados
+
+    # Fechar a conexão e o Cursor
+    cursor.close()
+    conexao.close()
+
+
 
 # READ
-comando = 'SELECT * FROM vendas'
-cursor.execute(comando) # Executar o comando SQL
-resultado = cursor.fetchall() # ler o banco de dados
-print(resultado) # printar o resultado do banco de dados    
+def listar_vendas(): # ela traz tudo, sem filtro. Parâmetro é a informação que a função precisa receber de fora. Se você quisesse listar só uma venda, aí sim receberia um idVendas
+# Criar uma conexão com banco de dados
+    conexao = conectar()
+# Criar um cursor para executar os comandos 
+    cursor = conexao.cursor()
+
+
+    comando = 'SELECT * FROM vendas' # Comando para ler dados
+    cursor.execute(comando) # Executar o comando SQL
+    resultado = cursor.fetchall() # fetchall() busca resultados e o commit confirma alterações. 
+
+# Fechar o cursor e fechar a conexão
+    cursor.close()
+    conexao.close()
+    return resultado
 
 # UPDATE
-idVendas = 3
-valor = 4
-comando = 'UPDATE vendas SET valor = %s WHERE idVendas = %s' # Fazer um comando SQL
-cursor.execute(comando, (valor, idVendas))
-conexao.commit()
+def atualizar_vendas(idVendas, valor): # Eu devo colocar como parâmetros os valores cujo eu desejo atualizar
+# Criar uma conexão com banco de dados
+    conexao = conectar()
+# Criar um cursor para executar os comandos
+    cursor = conexao.cursor()
+
+# Fazer um comando SQL
+    comando = 'UPDATE vendas SET valor = %s WHERE idVendas = %s' 
+# Executa o comando 
+    cursor.execute(comando, (valor,idVendas))
+# Edita o banco de dados
+    conexao.commit()
+
+# Fechar o cursor e a conexão
+    cursor.close()
+    conexao.close()  
 
 # DELETE
-idVendas = 2
-comando = 'DELETE FROM vendas WHERE idVendas = %s' # Fazer um comando SQL
-cursor.execute(comando, (idVendas,))
-conexao.commit()
+def deletar_vendas(idVendas): # Dar como parâmetro o registro que você deseja apagar
 
-# Encerrando Cursor
-cursor.close()
-# Encerrando Conexão
-conexao.close()
+    # Criar uma conexão com banco de dados
+    conexao = conectar()
+    # Criar um cursor para executar os comandos
+    cursor = conexao.cursor()
+
+    # Fazer um comando SQL 
+    comando = 'DELETE FROM vendas WHERE idVendas = %s'
+    # Executar o comando
+    cursor.execute(comando, (idVendas,))
+    # Editar o banco de dados 
+    conexao.commit()
+
+    # Fechar o cursor e a conexão
+    cursor.close()
+    conexao.close()
+
+
+
+if __name__ == "__main__":
+   deletar_vendas(2) # Chama a função deletar_vendas() e passa o idVendas que deseja apagar
+   atualizar_vendas(6, 100) # Chama a função atualizar_vendas() e passa o idVendas que deseja atualizar e o novo valor
+
+# cursor.rowcount é uma propriedade read-only que retorna o número de linhas afetadas por instruções DML (INSERT, UPDATE, DELETE) ou o número de linhas retornadas por instruções SELECT.
