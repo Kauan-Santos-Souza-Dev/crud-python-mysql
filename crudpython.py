@@ -96,7 +96,6 @@ def deletar_vendas(idVendas): # Dar como parâmetro o registro que você deseja 
 
 
 if __name__ == "__main__":
-   deletar_vendas(2) # Chama a função deletar_vendas() e passa o idVendas que deseja apagar
-   atualizar_vendas(6, 100) # Chama a função atualizar_vendas() e passa o idVendas que deseja atualizar e o novo valor
+   pass
+   
 
-# cursor.rowcount é uma propriedade read-only que retorna o número de linhas afetadas por instruções DML (INSERT, UPDATE, DELETE) ou o número de linhas retornadas por instruções SELECT.
