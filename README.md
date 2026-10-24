@@ -121,6 +121,7 @@ python crudpython.py
 ## Próximos passos
 
 - [x] Separar cada operação em uma função
-- [ ] Criar um menu interativo no terminal
-- [ ] Tratar erros com `try/except` e validar os dados de entrada
+- [x] Criar um menu interativo no terminal
+- [x] Tratar erros com `try/except` e 
+- [ ]validar os dados de entrada
 - [ ] Evoluir para um framework como django

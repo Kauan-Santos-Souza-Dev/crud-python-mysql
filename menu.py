@@ -19,8 +19,9 @@ def main():
             nome = input("Nome do produto: ")
             valor = float(input("Valor: "))
             criar_vendas(nome, valor)
+            print("Cadastrando", end="")
             for valor in range(6): # range(5) significa que o for vai se repetir 5 vezes
-                sleep(0.8) # sleep() faz o programa esperar um tempo antes de continuar
+                sleep(0.5) # sleep() faz o programa esperar um tempo antes de continuar
                 print(".", end="",flush=True) # flush=True força a impressão imediata do ponto
             print("Venda cadastrada!")
 
@@ -34,7 +35,7 @@ def main():
             valor = float(input("Novo valor: "))
             atualizar_vendas(valor, id_venda)
             for valor in range(6): # range(5) significa que o for vai se repetir 5 vezes
-                sleep(0.8) # sleep() faz o programa esperar um tempo antes de continuar
+                sleep(0.5) # sleep() faz o programa esperar um tempo antes de continuar
                 print(".", end="",flush=True) # flush=True força a impressão imediata do ponto
             print("Venda atualizada!")
 
@@ -42,14 +43,14 @@ def main():
             id_venda = int(input("ID da venda: "))
             deletar_vendas(id_venda)
             for valor in range(6): # range(5) significa que o for vai se repetir 5 vezes
-                sleep(0.8) # sleep() faz o programa esperar um tempo antes de continuar
+                sleep(0.5) # sleep() faz o programa esperar um tempo antes de continuar
                 print(".", end="",flush=True) # flush=True força a impressão imediata do ponto
             print("Venda removida!")
 
         elif opcao == "0":
             print("Encerrando", end="") # end=""  evita a quebra de linha
             for valor in range(6): # range(5) significa que o for vai se repetir 5 vezes
-                sleep(0.8) # sleep() faz o programa esperar um tempo antes de continuar
+                sleep(0.5) # sleep() faz o programa esperar um tempo antes de continuar
                 print(".", end="",flush=True) # flush=True força a impressão imediata do ponto
             print()
             break

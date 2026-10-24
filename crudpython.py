@@ -4,6 +4,7 @@
 # um valor guardado na memória do processo, fora do seu código. Se a variável não existir, devolve None.
 import os
 import mysql.connector
+from mysql.connector import Error # from mysql.connector import Error é um atalho, não uma necessidade. O Error já está acessível só com import mysql.connector, pelo caminho completo:
 from dotenv import load_dotenv
 
 # dotenv (python-dotenv): é a biblioteca que você instalou com o pip. 
@@ -23,75 +24,128 @@ def conectar():
  
 
 # CREATE 
-def criar_vendas(nome_Produto,valor):    
-# Criar uma conexão com banco de dados
-    conexao = conectar()
-# Criar um cursor para executar os comandos 
-    cursor = conexao.cursor()
+def criar_vendas(nome_Produto, valor):
+    conexao = None   # gavetas vazias (evita erro no finally)
+    cursor = None
 
-    comando = 'INSERT INTO vendas (nome_Produto, valor) VALUES (%s, %s)' # Fazer um comando SQL
-    cursor.execute(comando, (nome_Produto, valor)) # Executar o comando SQL
-    conexao.commit() # edita o banco de dados
+    try:
+        conexao = conectar()                 # abre a conexão com a função conectar(), que conecta ao banco de dados
+        cursor = conexao.cursor()            # cria o cursor, que executa os comandos SQL
 
-    # Fechar a conexão e o Cursor
-    cursor.close()
-    conexao.close()
+        comando = 'INSERT INTO vendas (nome_Produto, valor) VALUES (%s, %s)'
+        cursor.execute(comando, (nome_Produto, valor))   # executa o INSERT
+        conexao.commit()                     # salva de verdade
 
+        if cursor.rowcount == 0:
+            print("Nenhuma venda cadastrada.")
+        elif cursor.rowcount >= 1:
+            print(f"{cursor.rowcount} venda(s) cadastrada(s).")
+        else:
+            print(" Erro ao cadastrar venda.") 
+
+    except Error as e:
+        if conexao:                          # só desfaz se a conexão existe
+            conexao.rollback()               # descarta o que não foi salvo
+        print(f"Erro ao cadastrar venda: {e}")
+
+    finally:
+        if cursor:
+            cursor.close()                 # fecha o cursor
+        if conexao:
+            conexao.close()                # fecha a conexão com o banco de dados
 
 
 # READ
 def listar_vendas(): # ela traz tudo, sem filtro. Parâmetro é a informação que a função precisa receber de fora. Se você quisesse listar só uma venda, aí sim receberia um idVendas
-# Criar uma conexão com banco de dados
-    conexao = conectar()
-# Criar um cursor para executar os comandos 
-    cursor = conexao.cursor()
 
+    conexao = None
+    cursor = None
+    resultado = []                       # devolvido se der erro (lista vazia)
 
-    comando = 'SELECT * FROM vendas' # Comando para ler dados
-    cursor.execute(comando) # Executar o comando SQL
-    resultado = cursor.fetchall() # fetchall() busca resultados e o commit confirma alterações. 
+    try:
+        conexao = conectar()
+        cursor = conexao.cursor()
 
-# Fechar o cursor e fechar a conexão
-    cursor.close()
-    conexao.close()
-    return resultado
+        comando = 'SELECT * FROM vendas'
+        cursor.execute(comando)
+        resultado = cursor.fetchall()    # guarda todas as linhas
+
+    except Error as e:
+        print(f"Erro ao listar vendas: {e}")
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conexao:
+            conexao.close()
+
+    return resultado                     # fora do try: sempre devolve algo
 
 # UPDATE
 def atualizar_vendas(idVendas, valor): # Eu devo colocar como parâmetros os valores cujo eu desejo atualizar
-# Criar uma conexão com banco de dados
-    conexao = conectar()
-# Criar um cursor para executar os comandos
-    cursor = conexao.cursor()
+    conexao = None
+    cursor =  None
 
-# Fazer um comando SQL
-    comando = 'UPDATE vendas SET valor = %s WHERE idVendas = %s' 
-# Executa o comando 
-    cursor.execute(comando, (valor,idVendas))
-# Edita o banco de dados
-    conexao.commit()
+    try:
+        conexao = conectar()
+        cursor = conexao.cursor()
 
-# Fechar o cursor e a conexão
-    cursor.close()
-    conexao.close()  
+        comando = 'UPDATE vendas SET valor = %s WHERE idVendas = %s'
+        cursor.execute(comando, (valor, idVendas))
+        conexao.commit()
+
+        if cursor.rowcount == 0:
+            print(f'Nenhuma venda alterada, ID {idVendas} não existe ou valor já era esse:')
+        else:
+            print(f'{valor} inserido com sucesso em ID {idVendas}')
+
+    except Error as e:
+        if conexao:
+            conexao.rollback() 
+        print(f'Erro ao atualizar venda {e}')
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conexao:
+            conexao.close()
+        
+
 
 # DELETE
 def deletar_vendas(idVendas): # Dar como parâmetro o registro que você deseja apagar
+    conexao = None   # gavetas vazias (evita erro no finally)
+    cursor = None
 
+    try:
     # Criar uma conexão com banco de dados
-    conexao = conectar()
+        conexao = conectar()
     # Criar um cursor para executar os comandos
-    cursor = conexao.cursor()
+        cursor = conexao.cursor()
 
-    # Fazer um comando SQL 
-    comando = 'DELETE FROM vendas WHERE idVendas = %s'
+     # Fazer um comando SQL 
+        comando = 'DELETE FROM vendas WHERE idVendas = %s'
     # Executar o comando
-    cursor.execute(comando, (idVendas,))
+        cursor.execute(comando, (idVendas,))
     # Editar o banco de dados 
-    conexao.commit()
+        conexao.commit() 
+
+        if cursor.rowcount == 0: # Cursor que executa os comandos portanto ele deve receber o rowcount.
+            print("Nenhuma venda com ID {idVendas} encontrada.")
+        else:
+            print(f"{cursor.rowcount} venda(s) selecionada(s).")
+
+    except Error as e:
+        if conexao:                          # só desfaz se a conexão existe
+            conexao.rollback()               # descarta o que não foi salvo
+        print(f"Erro ao deletar venda: {e}")
 
     # Fechar o cursor e a conexão
-    cursor.close()
-    conexao.close()
+    finally:
+        if cursor:
+            cursor.close()                 # fecha o cursor
+        if conexao:
+            conexao.close()                # fecha a conexão com o banco de dados
 
 
 
