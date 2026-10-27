@@ -123,5 +123,5 @@ python crudpython.py
 - [x] Separar cada operação em uma função
 - [x] Criar um menu interativo no terminal
 - [x] Tratar erros com `try/except` e 
-- [ ]validar os dados de entrada
+- [x] validar os dados de entrada
 - [ ] Evoluir para um framework como django
