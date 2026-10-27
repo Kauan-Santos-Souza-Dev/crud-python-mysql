@@ -42,6 +42,7 @@ def criar_vendas(nome_Produto, valor):
             print(f"{cursor.rowcount} venda(s) cadastrada(s).")
         else:
             print(" Erro ao cadastrar venda.") 
+        
 
     except Error as e:
         if conexao:                          # só desfaz se a conexão existe
@@ -103,6 +104,7 @@ def atualizar_vendas(idVendas, valor): # Eu devo colocar como parâmetros os val
         if conexao:
             conexao.rollback() 
         print(f'Erro ao atualizar venda {e}')
+        return False
 
     finally:
         if cursor:
@@ -131,7 +133,7 @@ def deletar_vendas(idVendas): # Dar como parâmetro o registro que você deseja 
         conexao.commit() 
 
         if cursor.rowcount == 0: # Cursor que executa os comandos portanto ele deve receber o rowcount.
-            print("Nenhuma venda com ID {idVendas} encontrada.")
+            print(f'Nenhuma venda com ID {idVendas} encontrada.')
         else:
             print(f"{cursor.rowcount} venda(s) selecionada(s).")
 
@@ -139,6 +141,7 @@ def deletar_vendas(idVendas): # Dar como parâmetro o registro que você deseja 
         if conexao:                          # só desfaz se a conexão existe
             conexao.rollback()               # descarta o que não foi salvo
         print(f"Erro ao deletar venda: {e}")
+        return False
 
     # Fechar o cursor e a conexão
     finally:
